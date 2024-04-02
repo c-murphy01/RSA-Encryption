@@ -56,3 +56,64 @@ def mod_exp(base, exp, mod):
         #square and modulo (square part of square and multiply)
         base = (base * base) % mod
     return result
+
+#fucntion to choose a suitable value e
+def choose_e(phi):
+    #find a number that fits gcd(φ(n), e) = 1; 1 < e < φ(n)
+    for i in range(2, phi):
+        if gcd(i, phi) == 1:
+            return i
+    
+    return None
+
+#function to find greatest common denominator of two numbers
+def gcd(a, b):
+    #loop until b = 0
+    while b != 0:
+        #each iteration decrease the size of each number until a modulo 0 is left, then return a
+        temp = b
+        b = a % b
+        a = temp
+        
+    return a
+
+def extended_gcd(a, b):
+    if a == 0: #base case if a = 0
+        return b, 0, 1
+    
+    #otherwise recursively call the function to get smaller values
+    gcd, x1, y1 = extended_gcd(b % a, a)
+    
+    #calculate the bezout coefficients
+    x = y1 - (b // a) * x1
+    y = x1
+
+    return gcd, x, y
+
+def mod_inv(e, phi_n):
+    g, x, y = extended_gcd(e, phi_n)
+    if g != 1:
+        print('Modular inverse does not exist!')
+    else:
+        return x % phi_n 
+
+def RSA_encrypt():
+    #generate two prime numbers that are not equal
+    p, q = pick_prime()
+    while q == p:
+        q = pick_prime()
+
+    #calculate n and φ(n)
+    n = p*q
+    phi = (p-1)(q-1)
+
+    #choose a suitable e so that 1 < e < φ(n), and gcd(φ(n), e) = 1;
+    e = choose_e(phi)
+
+    #calculate d, where d ≡ e^−1 (mod φ(n))
+    d = mod_inv(e, phi)
+
+    print("p = " + p + "\n q = " + q + "\n n = " + n + "\n phi = " + phi + "\n e = " + e + "\n d = " + d)
+
+
+RSA_encrypt()
