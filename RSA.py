@@ -56,3 +56,37 @@ def mod_exp(base, exp, mod):
         #square and modulo (square part of square and multiply)
         base = (base * base) % mod
     return result
+
+#fucntion to choose a suitable value e
+def choose_e(phi):
+    #find a number that fits gcd(φ(n), e) = 1; 1 < e < φ(n)
+    for i in range(2, phi):
+        if gcd(i, phi) == 1:
+            return i
+        i += 1
+    
+    return None
+
+#function to find greatest common denominator of two numbers
+def gcd(a, b):
+    #loop until b = 0
+    while b != 0:
+        #each iteration decrease the size of each number until a modulo 0 is left, then return a
+        temp = b
+        b = a % b
+        a = temp
+        
+    return a
+
+def RSA_encrypt():
+    #generate two prime numbers that are not equal
+    p, q = pick_prime()
+    while q == p:
+        q = pick_prime()
+
+    #calculate n and φ(n)
+    n = p*q
+    phi = (p-1)(q-1)
+
+    #choose a suitable e so that 1 < e < φ(n), and gcd(φ(n), e) = 1;
+    e = choose_e(phi)
