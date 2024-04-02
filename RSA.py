@@ -2,10 +2,11 @@ import random
 
 #function to pick prime number
 def pick_prime():
+    prime = False
     while prime == False:
-        n = random.randint(3, 10000)
+        n = random.randint(3, 100000)
         if n % 2 == 0:
-            n+1
+            n += 1
 
         prime = miller_rabin(n, k = 5)
 
