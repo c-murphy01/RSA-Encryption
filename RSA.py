@@ -118,6 +118,20 @@ def generate_keys():
     #calculate d, where d ≡ e^−1 (mod φ(n))
     d = mod_inv(e, phi)
 
-    print("p = " + str(p) + "\nq = " + str(q) + "\nn = " + str(n) + "\nphi = " + str(phi) + "\ne = " + str(e) + "\nd = " + str(d))
+    #generate keys
+    PR = {'d': d, 'n': n}  #private
+    PU = {'e': e, 'n': n}  #public
 
-generate_keys()
+    return PR, PU
+
+def encrypt(message, public_key):
+    e, n = public_key['e'], public_key['n']
+    # Encryption
+    cipher = mod_exp(message, e, n)
+    return cipher
+
+def decrypt(cipher, private_key):
+    d, n = private_key['d'], private_key['n']
+    # Decryption
+    message = mod_exp(cipher, d, n)
+    return message
