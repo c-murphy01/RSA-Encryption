@@ -4,7 +4,7 @@ import random
 def pick_prime():
     prime = False
     while prime == False:
-        n = random.randint(3, 100000)
+        n = random.randint(3, 20)
         if n % 2 == 0:
             n += 1
 
@@ -14,6 +14,10 @@ def pick_prime():
 
 #primality test function (rand odd int n and k rounds)
 def miller_rabin(n, k):
+    
+    #handle case of n = 3
+    if n == 3:
+        return True
     
     #need to find n-1 in the form (2^s) * d, where s is a positive integer and d is an odd positive integer
     s, d = 0, n - 1 #set initial values
@@ -97,15 +101,16 @@ def mod_inv(e, phi_n):
     else:
         return x % phi_n 
 
-def RSA_encrypt():
+def generate_keys():
     #generate two prime numbers that are not equal
-    p, q = pick_prime()
+    p = pick_prime()
+    q = p
     while q == p:
         q = pick_prime()
 
     #calculate n and φ(n)
     n = p*q
-    phi = (p-1)(q-1)
+    phi = (p-1)*(q-1)
 
     #choose a suitable e so that 1 < e < φ(n), and gcd(φ(n), e) = 1;
     e = choose_e(phi)
@@ -113,7 +118,6 @@ def RSA_encrypt():
     #calculate d, where d ≡ e^−1 (mod φ(n))
     d = mod_inv(e, phi)
 
-    print("p = " + p + "\n q = " + q + "\n n = " + n + "\n phi = " + phi + "\n e = " + e + "\n d = " + d)
+    print("p = " + str(p) + "\nq = " + str(q) + "\nn = " + str(n) + "\nphi = " + str(phi) + "\ne = " + str(e) + "\nd = " + str(d))
 
-
-RSA_encrypt()
+generate_keys()
