@@ -135,17 +135,34 @@ def generate_keys():
     return PR, PU
 
 #encrypt message
-def encrypt(message, public_key):
+def encrypt(message, public):
     #extract exponent, e, and modulus, n from key
-    e, n = public_key['e'], public_key['n']
+    e, n = public['e'], public['n']
     #encrypt the message using modular exponentiation
     cipher = mod_exp(message, e, n)
     return cipher
 
 #decrypt cipher
-def decrypt(cipher, private_key):
-    #extract the exponent, d, and the modulus, n, from key
-    d, n = private_key['d'], private_key['n']
+def decrypt(cipher, private):
+    #extract exponent, d, and modulus, n, from key
+    d, n = private['d'], private['n']
     #decrypt the message using modular exponentiation
     message = mod_exp(cipher, d, n)
+    return message
+
+#sign message
+def sign(message, private):
+    #extract exponent, d, and modulus, n from key
+    d, n = private['d'], private['n']
+    #sign the message using modular exponentiation
+    signature = mod_exp(message, d, n)
+    return signature
+
+#check message signature
+def check_sign(signature, public):
+    #extract exponent, d, and modulus, n from key
+    e, n = public['e'], public['n']
+    #decrypt the message using modular exponentiation
+    message = mod_exp(signature, e, n)
+    #return the plaintext message to verify signature
     return message
