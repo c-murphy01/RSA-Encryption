@@ -4,7 +4,7 @@ import random
 def pick_prime():
     prime = False
     while prime == False:
-        n = random.randint(3, 20)
+        n = random.randint(3, 1000)
         if n % 2 == 0:
             n += 1
 
