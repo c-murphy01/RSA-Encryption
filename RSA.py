@@ -1,16 +1,22 @@
+#to generate random numbers to find primes
 import random
 
 #function to pick prime number
 def pick_prime():
+    #initialise
     prime = False
+    #loop until prime is found
     while prime == False:
-        n = random.randint(3, 1000)
-        if n % 2 == 0:
-            n += 1
+        num = random.randint(3, 1000)
+        #ensure number is odd
+        if num % 2 == 0:
+            num += 1
 
-        prime = miller_rabin(n, k = 5)
+        #check for primality, 5 rounds by default
+        prime = miller_rabin(num, k = 5)
 
-    return n
+    #return prime number when found
+    return num
 
 #primality test function (rand odd int n and k rounds)
 def miller_rabin(n, k):
@@ -81,6 +87,7 @@ def gcd(a, b):
         
     return a
 
+#extended greatest common denominator to find that and the bezout coefficients, such that ax+by=gcd(a,b)
 def extended_gcd(a, b):
     if a == 0: #base case if a = 0
         return b, 0, 1
@@ -94,13 +101,16 @@ def extended_gcd(a, b):
 
     return gcd, x, y
 
+#calculate the modular inverse of a number, e, w.r.t. another number, phi_n
 def mod_inv(e, phi_n):
     g, x, y = extended_gcd(e, phi_n)
     if g != 1:
         print('Modular inverse does not exist!')
     else:
+        #return the modular inverse
         return x % phi_n 
 
+#generate the private and public encryption keys
 def generate_keys():
     #generate two prime numbers that are not equal
     p = pick_prime()
@@ -124,14 +134,18 @@ def generate_keys():
 
     return PR, PU
 
+#encrypt message
 def encrypt(message, public_key):
+    #extract exponent, e, and modulus, n from key
     e, n = public_key['e'], public_key['n']
-    # Encryption
+    #encrypt the message using modular exponentiation
     cipher = mod_exp(message, e, n)
     return cipher
 
+#decrypt cipher
 def decrypt(cipher, private_key):
+    #extract the exponent, d, and the modulus, n, from key
     d, n = private_key['d'], private_key['n']
-    # Decryption
+    #decrypt the message using modular exponentiation
     message = mod_exp(cipher, d, n)
     return message
