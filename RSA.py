@@ -1,53 +1,9 @@
 #to generate random numbers to find primes
 import random
 
-#function to pick prime number
-def pick_prime():
-    #initialise
-    prime = False
-    #loop until prime is found
-    while prime == False:
-        num = random.randint(3, 1000)
-        #ensure number is odd
-        if num % 2 == 0:
-            num += 1
-
-        #check for primality, 5 rounds by default
-        prime = miller_rabin(num, k = 5)
-
-    #return prime number when found
-    return num
-
-#primality test function (rand odd int n and k rounds)
-def miller_rabin(n, k):
-    
-    #handle case of n = 3
-    if n == 3:
-        return True
-    
-    #need to find n-1 in the form (2^s) * d, where s is a positive integer and d is an odd positive integer
-    s, d = 0, n - 1 #set initial values
-    #divide d by 2 (floor division) until it is odd and count iterations with s
-    while d % 2 == 0:
-        d //= 2
-        s += 1
-
-    for _ in range(k): #even if n seems to be prime with a certain base a, we need to check others to be sure
-        a = random.randint(2, n-2)
-        #initial test for primality
-        x = mod_exp(a, d, n)  #compute a^d % n
-        if x == 1 or x == n - 1: #if either of these is true, n passes the base test and might be prime
-            continue
-            #
-        for _ in range(s - 1):
-            x = mod_exp(x, 2, n)  #square x and mod n
-            if x == n - 1:
-                break  #n passes; high probability of being prime
-        
-        else: #n fails the test; it is composite
-            return False
-    
-    return True
+######################
+# HELPER FUNCS
+######################
 
 #function to calculate base^exp % mod
 def mod_exp(base, exp, mod):
@@ -66,15 +22,6 @@ def mod_exp(base, exp, mod):
         #square and modulo (square part of square and multiply)
         base = (base * base) % mod
     return result
-
-#fucntion to choose a suitable value e
-def choose_e(phi):
-    #find a number that fits gcd(φ(n), e) = 1; 1 < e < φ(n)
-    for i in range(2, phi):
-        if gcd(i, phi) == 1:
-            return i
-    
-    return None
 
 #function to find greatest common denominator of two numbers
 def gcd(a, b):
@@ -110,6 +57,67 @@ def mod_inv(e, phi_n):
         #return the modular inverse
         return x % phi_n 
 
+#primality test function (rand odd int n and k rounds)
+def miller_rabin(n, k):
+    
+    #handle case of n = 3
+    if n == 3:
+        return True
+    
+    #need to find n-1 in the form (2^s) * d, where s is a positive integer and d is an odd positive integer
+    s, d = 0, n - 1 #set initial values
+    #divide d by 2 (floor division) until it is odd and count iterations with s
+    while d % 2 == 0:
+        d //= 2
+        s += 1
+
+    for _ in range(k): #even if n seems to be prime with a certain base a, we need to check others to be sure
+        a = random.randint(2, n-2)
+        #initial test for primality
+        x = mod_exp(a, d, n)  #compute a^d % n
+        if x == 1 or x == n - 1: #if either of these is true, n passes the base test and might be prime
+            continue
+            #
+        for _ in range(s - 1):
+            x = mod_exp(x, 2, n)  #square x and mod n
+            if x == n - 1:
+                break  #n passes; high probability of being prime
+        
+        else: #n fails the test; it is composite
+            return False
+    
+    return True
+
+######################
+# KEY EXPANSION
+######################
+
+#function to pick prime number
+def pick_prime():
+    #initialise
+    prime = False
+    #loop until prime is found
+    while prime == False:
+        num = random.randint(3, 1000)
+        #ensure number is odd
+        if num % 2 == 0:
+            num += 1
+
+        #check for primality, 5 rounds by default
+        prime = miller_rabin(num, k = 5)
+
+    #return prime number when found
+    return num
+
+#fucntion to choose a suitable value e
+def choose_e(phi):
+    #find a number that fits gcd(φ(n), e) = 1; 1 < e < φ(n)
+    for i in range(2, phi):
+        if gcd(i, phi) == 1:
+            return i
+    
+    return None
+
 #generate the private and public encryption keys
 def generate_keys():
     #generate two prime numbers that are not equal
@@ -133,6 +141,10 @@ def generate_keys():
     PU = {'e': e, 'n': n}  #public
 
     return PR, PU
+
+######################
+# MAIN ALGORITHM
+######################
 
 #encrypt message
 def encrypt(message, public):
